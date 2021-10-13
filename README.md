@@ -1,0 +1,3 @@
+#LIVE_EDITOR
+
+simple live text editor with chat features. There are two editors inside the main page, one is private editor and other public editor private editing results are shown on the result area left side. chats are bottom left section only reserved for our predefined users only me, mishal and danish. login credentials are there for just as a feature not really cared of authentication process etc..

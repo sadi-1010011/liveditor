@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>LIVEDITOR</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<style type="text/css">
+
+/* --------------COMMON RULES------------ */
+
+* { box-sizing: border-box; }
+
+html, body {
+    width: 100vw;
+    height: 100vh;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+    width: 100%;
+    height: 100%;
+    color: white;
+    line-height: 1.6;
+    font-size: 18px;
+    font-weight: normal;
+    font-family: cursive;
+}
+
+#wholePage {
+    background-color: #6d4786;
+    width: 100%;
+    height: 100%;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* ---------------MAIN 3 SECTIONS-------------*/
+
+#result_section {
+    position: fixed;
+    width: 70%;
+    height: 70%;
+    top: 0px;
+    left: 0px;
+    border-radius: 8px;
+    border-top: 6px solid rgb(115, 17, 180);
+    background-color: blueviolet;
+}
+
+#chat_section {
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    position: fixed;
+    width: 70%;
+    height: 30%;
+    bottom: 0px;
+    left: 0px;
+    border-radius: 8px;
+    z-index: 99;
+    border-bottom: 6px solid rgb(139, 28, 212);
+    background-color: rgb(159, 84, 230);
+}
+
+#editor_section {
+    position: fixed;
+    width: 30%;
+    height: 100%;
+    top: 0px;
+    right: 0px;
+    border-radius: 8px;
+    border-top: 6px solid #4f3e75;
+    border-bottom: 6px solid #4f3e75;
+    background-color: #4f3c75;
+    transition: 0.8s;
+}
+
+
+/*------------RESULT SECTION----------*/
+
+#result_frame {
+	/*border: 2px solid red;
+	border-radius: 6px;*/
+	border: none;
+	width: 100%;
+	height: 100%;
+}
+
+#side_toolbar {
+	/*border: 1px solid white;*/
+	position: absolute;
+	display: inline;
+	right: 0;
+	top: 0;
+	height: 85%;
+	padding: 6px 5px;
+    text-align: center;
+	border-radius: 8px;
+	opacity: 0;
+	visibility: hidden;
+    transition: 1s ease-in;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+#side_toolbar div.sidetools {
+	border: 2px solid red;
+	border-radius: 6px;
+	padding: 4px;
+	margin-top: 5px;
+	background-color: lightgreen;
+}
+
+#side_toolbar div.sidetools:hover {
+	/*color: crimson;*/
+	background-color: yellowgreen;
+}
+
+#sidebar_toggle {
+	/*border: 2px solid blue;*/
+	position: absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	right: 0;
+	bottom: 0;
+	height: 15%;
+	padding: 0 10px;
+}
+
+#sidebar_toggle > span {
+	border-radius: 50%;
+	background-color: red;
+	padding: 6px 15px;
+	transition: 0.34s;
+}
+
+#sidebar_toggle > span:hover {
+	background-color: crimson;
+}
+
+/* -----------CHAT SECTION----------- */
+
+.chatbox {
+    border-left: 1px solid #6d4786;
+    width: 32%;
+    padding: 6px 8px;
+    overflow: hidden;
+}
+
+.chatbox:first-child { border-left: none; }
+
+.chatheader {
+    /* border: 1px solid white; */
+    border-bottom: 2px solid rebeccapurple;
+    padding: 3px;
+    line-height: 1.6;
+    border-radius: 5px;
+    z-index: 9;
+}
+
+.chatname {
+    text-transform: capitalize;
+    font-family: cursive;
+}
+
+.chatterstatus {
+    color: darkgrey;
+    font-size: 15px;
+    float: right;
+    margin-right: 6px;
+}
+
+.chatbody {
+    width: 100%;
+    height: 100%;
+    margin: 5px auto;
+    padding: 3px 0 36px 0;
+    background-color: transparent;
+    overflow: scroll;
+}
+
+.chatbody > p {
+    display: inline-block;
+    margin: 6px 3px 0px 4px;
+    padding: 4px 6px;
+    border-radius: 12px;
+    background-color: blueviolet;
+    color: turquoise;
+    font-size: 16px;
+    word-wrap: break-word;
+}
+
+#usermsg-container {
+    position: fixed;
+    bottom: 16px;
+    width: 30%;
+}
+
+#usermsg {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    border-radius: 15px;
+    border: none;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: helvetica, sans-serif, cursive;
+    text-align: center;
+    padding: 4px 8px;
+    background-color: #5c4f6c;
+    opacity: 0.3;
+    transition: 0.8s;
+}
+
+#usermsg:hover {
+    opacity: 1;
+    z-index: 19;
+}
+
+
+/* --------------EDITOR SECTION------------ */
+
+textarea.subeditor {
+    border: none;
+    display: block;
+    width: 100%;
+    height: 50%;
+    margin: 0;
+    padding: 10px 8px;
+    overflow-y: scroll;
+    color: springgreen;
+    background-color: transparent;
+    line-height: 1.7;
+    font-family: monospace !important;
+    font-size: 16px;
+    transition: 0.8s;
+}
+
+textarea.subeditor:first-child {
+    line-height: 1.3;
+    font-family: teletype, monospace, sans-serif;
+    font-size: 18px;
+    color: white;
+    background-color: rgba(20, 20, 20, 0.25);
+}
+
+
+/*-----------OTHERS & TRANSITIONS-------------*/
+
+#bysadi {
+    color: rgb(250, 41, 18);
+    text-shadow: 2px 1px rgb(0, 0, 0);
+}
+
+#chat_resizer {
+	display: inline;
+	position: absolute;
+	background-color: red;
+	border-radius: 8px;
+	padding: 2px 4px;
+	top: -12px;
+	left: 48%;
+	opacity: 0;
+	transition: 0.26s;
+	cursor: row-resize;
+}
+
+#editor_resizer {
+	position: relative;
+    top: -15px;
+	left: 48%;
+	display: inline-block;
+	background-color: red;
+	border-radius: 8px;
+	padding: 2px 4px;
+	cursor: row-resize;
+	transition: 0.26s;
+	opacity: 1;
+}
+
+#chat_resizer:hover {
+	opacity: 1;
+	z-index: 9;
+}
+
+#editor_resizer:hover:after {
+	content: "rag";
+	text-transform: uppercase;
+	left: 45%;
+}
+
+#editor_resizer:hover {
+	left: 45%;
+	opacity: 1;
+	z-index: 9;
+}
+
+
+/* -------------MEDIA RULES---------- */
+
+@media screen and (max-width: 880px) {
+    
+    #bysadi { display: none; }
+	#editor_resizer { display: inline-block; }
+	#chat_resizer { display: none; }
+
+}
+
+	</style>
+</head>
+<body>
+
+<main id="wholePage">
+
+<!-- ============== RESULT SECTION ============= -->
+
+    <section id="result_section">
+        <iframe src="" width="100%" height="100%" id="result_frame"></iframe>
+        <div id="side_toolbar">
+        	<div class="sidetools" style="background-color: blueviolet; border-radius: 50%;" onclick="defaultTheme();">violet</div>
+        	<div class="sidetools" style="background-color: black; border-radius: 50%;" onclick="setThemeDark();">dark</div>
+        	<div class="sidetools" style="background-color: white; color: black; border-radius: 50%;" onclick="setThemeLight();">light</div>
+        	<div class="sidetools" onmouseover="setlayout('94%','6%','60%','40%');">layout1</div>
+        	<div class="sidetools" onmouseover="setlayout('70%','30%','50%','50%');">layout2</div>
+        	<div class="sidetools" style="color: darkred;" onclick="normallayout();">laptop</div>
+        	<div class="sidetools" style="color: darkblue" onclick="mobilelayout();">mobile</div>
+        	<div class="sidetools">tool_3</div>
+        	<div class="sidetools">tool_4</div>
+        </div>
+        <div id="sidebar_toggle">
+        	<span onclick="toggle_sidebar();">#</span>
+        </div>
+    </section>
+
+<!-- ============== CHAT SECTION ============= -->
+
+    <section id="chat_section">
+
+        <div id="chat_resizer" draggable="true">DRAG</div>
+
+        <div class="chatbox">
+            <div class="chatheader">
+                <span class="chatname" id="chatter1">anonymous</span>
+                <span class="chatterstatus" id="chatstatus1" style="display: none; color: rgb(30, 255, 161);">online</span>
+            </div>
+            <div class="chatbody" id="chatbody1">
+            </div>
+        </div>
+        
+        <div class="chatbox">
+            <div class="chatheader">
+                <span class="chatname" id="chatter2">anonymous</span>
+                <span class="chatterstatus" id="chatstatus2" style="display:none; color: rgb(30, 255, 161);">online</span>
+            </div>
+            <div class="chatbody" id="chatbody2">
+            </div>
+        </div>
+
+        <div class="chatbox">
+            <div class="chatheader">
+                <span class="chatname" id="chatter3">anonymous</span>
+                <span class="chatterstatus" id="chatstatus3" style="display: none; color: rgb(30, 255, 161);">online</span>
+            </div>
+            <div class="chatbody" id="chatbody3">
+            </div>
+        </div>
+
+        <div id="usermsg-container">
+            <input type="text" id="usermsg" placeholder="type message here..">
+        </div>
+
+    </section>
+
+<!-- ============== EDITOR SECTION ============= -->
+
+    <section id="editor_section">
+        <textarea class="subeditor" id="subeditor1" spellcheck="false" autocomplete="off">
+                MISSION BOARD   
+
+This editor can be edited by anyone online it will be visible to everyone. You can share code fragments, mission targets.. etc.
+
+> task 1
+> task 2
+    * subtask 1
+    * subtask 2
+> task 3
+    * subtask 1
+
+[=====50%=====] progressbar
+        </textarea>
+        <div id="editor_resizer" draggable="true">D</div>
+        <!-- <hr size="2" width="92%" color="red"> -->
+        <textarea class="subeditor" id="subeditor2" spellcheck="false" onkeypress="showupdatedresult();" onchange="showupdatedresult();">
+            <h1 align="center">hello <%= admin %></h1>
+            <p align="center">
+            This is your private editting area here you can type any code . it will be rendered to left frame.
+            </p>
+        </textarea>
+    </section>
+
+</main>
+
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+//script for liveditor by sadi @24-6-2020;
+
+let sidebar_toggle = 0;
+let chattername;
+let mychatbox;
+let socket;
+
+// select elements
+const resultsection = id('result_section');
+const chatsection = id('chat_section');
+const editorsection = id('editor_section');
+const subeditor1 = id('subeditor1');
+const subeditor2 = id('subeditor2');
+
+// magic power: resizabilityy ;)
+resizable(resultsection, chatsection, id('chat_resizer'));
+resizable(subeditor1, subeditor2, id('editor_resizer'));
+
+
+//sidebar toggle
+function toggle_sidebar() {
+	let sidebar = id('side_toolbar');
+	if(sidebar_toggle) {
+		sidebar_toggle = 0;
+		sidebar.style.height = '20%';
+		sidebar.style.opacity = '0';
+		sidebar.style.visibility = 'hidden';
+		event.target.style.transform = 'rotate(180deg)';
+	}
+	else {
+		sidebar_toggle = 1;
+		sidebar.style.height = '85%';
+		sidebar.style.opacity = '1';
+		sidebar.style.visibility = 'visible';
+		event.target.style.transform = 'rotate(0deg)';
+	}
+}
+
+// set layout
+function setlayout(val1, val2, val3, val4) {
+	resultsection.style.height = val1;
+	chatsection.style.height = val2;
+	subeditor1.style.height = val3;
+	subeditor2.style.height = val4;
+}
+
+// set dark-light theme
+function setThemeDark() {
+    resultsection.style.backgroundColor = 'black';
+    chatsection.style.backgroundColor = '#212223';
+    editorsection.style.backgroundColor = '#303030';
+}
+
+function setThemeLight() {
+    resultsection.style.backgroundColor = 'white';
+    chatsection.style.backgroundColor = '#d0d0e3';
+    editorsection.style.backgroundColor = '#a7a299';
+}
+
+function defaultTheme() {
+    resultsection.style.backgroundColor = 'blueviolet';
+    chatsection.style.backgroundColor = 'rgb(159, 84, 230)';
+    editorsection.style.backgroundColor = '#4f3c75';
+}
+
+// by default
+setThemeDark();
+
+// CORE FEATURE !! render result in result frame
+function showupdatedresult() {
+	var user_code = event.target.value;
+	const resultframe = document.getElementById('result_frame');
+	resultframe.contentDocument.open();
+	resultframe.contentDocument.write(user_code);
+	resultframe.contentDocument.close();
+	// console.log('--result rendered successfully--');
+}
+
+
+// get chatter name
+function getusername() {
+    chattername = prompt('chat as : ','anonymous');
+    if(!chattername || chattername == '' || null || undefined) chattername = 'anonymous';
+    // update name to others too
+    socket.emit('updatename', chattername);
+}
+
+// initialise chat socket
+function setupchat() {
+    // console.log('setting up chat features');
+    let mysocketlink = window.location.origin; // origin ~ ie, me !
+    socket = io.connect(mysocketlink); // connects to socket
+
+    //grab dom elements
+    const publiceditor = id('subeditor1');
+    const usermsg = id('usermsg');
+
+    getusername(); // should i detail this?
+
+    // recieve setup info from server
+    socket.on('setmychatbox', function(data) {
+            // data contains all users info
+        let allusers = data.allusers;
+            // update chatbox n names
+        allusers.forEach((user) => {
+            if (user.chatbox > 0 && user.chatbox < 4) {
+                id(`chatter${user.chatbox}`).innerHTML = user.chattername;
+                id(`chatstatus${user.chatbox}`).style.display = 'block';
+            } else {
+                alert('maximum users are online..!');
+                // disconnect from socket and exit
+                socket.disconnect();
+                window.close();                
+            }
+            // get my box out of 3
+        mychatbox = Number(data.mychatbox);
+        id(`chatter${mychatbox}`).innerHTML = chattername;
+        id(`chatstatus${mychatbox}`).style.display = 'block';
+        });
+
+    });
+
+    // send public text
+    publiceditor.addEventListener('change', function() {
+        socket.emit('publicedit', { newedit: publiceditor.value, editby: chattername });
+    });
+
+
+    // recieve public text
+    socket.on('publicedit', function(data) {
+        publiceditor.value = data.newedit;
+        console.log('publiceditor was last editted by : '+data.chattername);
+    });
+
+    // sent user msg
+    usermsg.addEventListener('change', function newusermsg() {
+        socket.emit('newmessage', { newmsg: usermsg.value, from: chattername, chatbox: mychatbox });
+        let p = document.createElement('p');
+        p.append(usermsg.value);
+        p.style.color = 'white';
+        id(`chatbody${mychatbox}`).append(p);
+        usermsg.value = '';
+        id(`chatstatus${mychatbox}`).style.display = 'block';
+    });
+
+    // recieve user message
+    socket.on('newmessage', function(data) {
+        // console.log('new message : '+data.newmsg+' from : '+data.from+' box : '+data.chatbox);
+        let p = document.createElement('p');
+        p.append(data.newmsg);
+        // chat box to appen new msg
+        let currentchatboxToAppend = id(`chatbody${data.chatbox}`);
+        currentchatboxToAppend.append(p);
+        currentchatboxToAppend.scrollTop = currentchatboxToAppend.scrollHeight;
+        // show chatter online green signal
+        id(`chatstatus${data.chatbox}`).style.display = 'block';
+    });
+
+    // recieve username change update
+    socket.on('updatename', function(data) {
+            // update names n shitt chat box
+        if(data.updatedUserBox && data.updatedName) {
+            id(`chatter${data.updatedUserBox}`).innerHTML = data.updatedName;
+            id(`chatstatus${data.updatedUserBox}`).style.display = 'block';
+        }
+    });
+
+    // handle disconnected user
+    socket.on('exituser', function(data) {
+        console.log('exited user: ',data);
+        // DOM manipulation ahead!
+        if(data > 3 || data < 1) return 0;
+        id(`chatter${Number(data)}`).innerHTML = "exited";
+        id(`chatstatus${Number(data)}`).style.display = 'none';
+        id(`chatbody${Number(data)}`).lastElementChild.style.color = "red !important";
+    });
+
+}
+
+// EDITOR LAYOUTS
+
+//normal responsive layout
+function normallayout() {
+    editorsection.style.width = '30%';
+    editorsection.style.height = '100%';
+    editorsection.style.top = '0%';
+    subeditor1.style.display = 'block';
+    subeditor1.style.width = '100%';
+    subeditor1.style.height = '50%';
+    subeditor2.style.display = 'block';
+    subeditor2.style.width = '100%';
+    subeditor2.style.height = '50%';
+    chatsection.style.width = '70%';
+    chatsection.style.height = '30%';
+    resultsection.style.width = '70%';
+    resultsection.style.height = '70%';
+}
+
+//mobile responsive layout
+function mobilelayout() {
+    editorsection.style.width = '100%';
+    editorsection.style.height = '25%';
+    editorsection.style.top = '50%';
+    subeditor1.style.display = 'inline';
+    subeditor1.style.width = '47.5%';
+    subeditor1.style.height = '100%';
+    subeditor2.style.display = 'inline';
+    subeditor2.style.width = '47.5%';
+    subeditor2.style.height = '100%';
+    chatsection.style.width = '100%';
+    chatsection.style.height = '25%';
+    resultsection.style.width = '100%';
+    resultsection.style.height = '50%';
+}
+
+
+// HELPER FN's
+
+function id(el) {
+    return document.getElementById(el);
+}
+
+// make elements resizable
+function resizable(aboveitem, belowitem, resizer) {
+    resizer.addEventListener('drag', function(event) {
+        let yvalue = event.y;
+        if(yvalue) { //ondrop y value becomes zero
+            aboveitem.style.height = yvalue + 'px';
+            belowitem.style.height = (window.innerHeight - yvalue) + 'px';
+        }
+    });
+}
+
+
+//start all setup when window is fully loaded
+window.addEventListener('load', setupchat, false);
+
+
+// little UI fixxs (not yet)
+// ---------------
+// FIX 1: chatbox left border
+// document.querySelector('.chatbox').parentElement.firstElementChild.style.borderLeft = 'none';
+
+// FIX 2: usermsg animation
+// document.getElementById('usermsg-container').addEventListener('blur', function() {
+//     this.style.width = "3%";
+// });
+
+
+</script>    
+</body>
+</html>

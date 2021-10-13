@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>login - LIVEDITOR</title>
+	<style type="text/css">
+
+* { box-sizing: border-box; }
+
+body {
+	margin: 0;
+	padding: 0;
+	background-color: rgb(25, 54, 58);
+}
+
+#main-title {
+	font-size: 28px;
+	font-family: monospace;
+	text-align: center;
+	color: white;
+}
+
+#input-container {
+	margin: 3rem auto;
+	width: 40%;
+	background-color: #354835;
+	border-radius: 12px;
+	padding: 20px 10px;
+	text-align: center;
+}
+
+.inputbox {
+	position: relative;
+	display: block;
+	margin: 30px auto;
+	width: 60%;
+	padding: 6px 16px;
+	border-radius: 4px;
+	border: none;
+	color: white;
+	background-color: #373b45;
+	font-size: 22px;
+	font-family: monospace, cursive, impact;
+}
+
+#submitbtn {
+	padding: 10px 30px;
+	line-height: 1.7;
+	text-transform: uppercase;
+	font-weight: bold;
+	font-family: sans-serif, arial;
+	background-color: rgb(79 150 141);
+	border: none;
+	transition: 0.27s;
+	box-shadow: 1px 4px 3px rgba(0,0,0,0.3);
+}
+
+#guestbtn {
+	display: block;
+	width: 20%;
+	margin: 12px auto;
+	padding: 8px 18px;
+	font-family: Arial, Helvetica, sans-serif;
+	text-transform: capitalize;
+	font-weight: bolder;
+	color: grey;
+	background-color: transparent;
+	border: none;
+	transition: 0.27s;
+}
+
+#guestbtn:hover {
+	color: white;
+	background-color: rgb(91 180 221);
+}
+
+
+#submitbtn:hover, #submitbtn:focus {
+	background-color: darkgreen;
+	color: white;
+	box-shadow: 2px 5px 4px rgba(0,0,0,1);
+}
+
+.mydismissbox {
+	display: block;
+	margin: 20px auto;
+	width: 94%;
+	background-color: rgba(239,193,139,0.7);
+	padding: 4px 12px;
+	color: brown;
+	font-weight: bold;
+	font-family: helvetica, sans-serif, arial;
+	border-radius: 10px;
+}
+
+.mydismissbox > span {
+	display: inline-block;
+	padding: 2px 10px;
+	margin: 0;
+	line-height: 1.2;
+	font-size: 22px;
+	color: red;
+}
+
+
+@media screen and (max-width: 700px) {
+	#input-container { width: 90%; }
+	.inputbox { width: 80%; }
+}
+
+	</style>
+</head>
+<body>
+
+<h1 id="main-title">LIVE EDITOR</h1>
+
+<div id="input-container">
+	<form action="/login" method="post">
+		<input type="text" name="username" id="username" class="inputbox" placeholder="username..">
+		<input type="text" name="password" id="password" class="inputbox" placeholder="password..">
+		<div id="guestbtn">
+			<input type="checkbox" id="guestcheckbox" name="guestcheckbox">
+			<label for="guestcheckbox">GUEST</label>
+		</div>
+		<input type="submit" id="submitbtn" value="login">
+	</form>
+
+	<% if(typeof loginerrors != 'undefined') { 
+	 loginerrors.forEach(function(loginerrors) { %>
+	 
+	 <div class="mydismissbox">
+	 	<span onclick="document.querySelector('div.mydismissbox').style.display = 'none';">x</span>
+	 	<p>
+	 		<%= loginerrors.errormsg %>
+	 	</p>
+	 </div>
+
+	 <% });} %>
+
+
+</div>
+
+<script>
+
+// guest login
+
+const guestcheckbox = document.getElementById('guestcheckbox');
+
+guestcheckbox.addEventListener('change', function() {
+	if (this.checked) { // u: guest, pswd: guest123
+		document.getElementById('username').value = 'guest';
+		document.getElementById('password').value = 'guest123';
+		console.log('checked');
+	} else { // clear input
+		document.getElementById('username').value = '';
+		document.getElementById('password').value = '';
+		console.log('unchecked');
+	}
+});
+
+</script>
+</body>
+</html>

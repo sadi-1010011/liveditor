@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>socket test 2</title>
+	<style type="text/css">
+
+* { box-sizing: border-box; }
+
+body {
+	margin: 0;
+	padding: 0;
+	background-color: rgb(46, 46, 8);
+}
+
+#container,#chatbody {
+	display: block;
+	margin: 2cm auto;
+	width: 40%;
+	text-align: center;
+}
+
+input {
+	width: 100%;
+	border: none;
+	padding: 10px 2rem;
+	border-radius: 20px;
+	border: 1px solid grey;
+	font-size: 1.2em;
+	color: white;
+	background-color: transparent;
+}
+
+button {
+	border: none;
+	font-size: 20px;
+	padding: 8px 20px;
+	margin: 20px 0;
+	border-radius: 4px;
+	transition: 0.23s;
+	background-color: black;
+	color: white;
+}
+
+button:hover {
+	background-color: white;
+	color: black;
+}
+
+#chatbody {
+	background-color: #36333b;
+	color: black;
+	padding: 20px 10px;
+	border-radius: 8px;
+}
+
+p {
+	background-color: #353e41;
+	padding: 6px;
+	margin: 8px;
+	color: yellowgreen;
+	font-size: larger;
+	font-family: Helvetica, sans-serif, cursive;
+}
+
+
+	</style>
+</head>
+<body>
+
+<div id="container">
+	<input id="usermsg" type="text" placeholder="message here..">
+	<button id="sendmsg">send</button>
+</div>
+<div id="chatbody"></div>
+
+<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+<script type="text/javascript">
+
+window.addEventListener('load', setupchat, false);
+
+function setupchat() {
+
+	var socket = io.connect('http://localhost:3000');
+	let usermsg = document.getElementById('usermsg');
+	let sendmsg = document.getElementById('sendmsg');
+	let chatbody = document.getElementById('chatbody');
+
+	sendmsg.addEventListener('click', function() {
+		socket.emit('newmessage', { newmsg: usermsg.value });
+		let x = document.createElement('p');
+		x.append(usermsg.value);
+		chatbody.append(x);
+		usermsg.value = '';
+	});
+
+	socket.on('newmessage', function(data) {
+		console.log('server sent a message : '+data.newmsg);
+		let x = document.createElement('p');
+		x.append('data.newmsg');
+		chatbody.append(x);
+	});
+
+
+
+
+}
+
+
+
+</script>
+</body>
+</html>
